@@ -1,4 +1,3 @@
-import contactsService from "../services/contactsServices.js";
 import { createContactSchema, updateContactSchema } from "../schemas/contactsSchemas.js";
 
 export const getAllContacts = (req, res) => {

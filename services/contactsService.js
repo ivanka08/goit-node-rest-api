@@ -1,7 +1,7 @@
 import { readFile, writeFile } from "fs/promises";
 import { join } from "path";
 
-const contactsPath = join(process.cwd(), "contacts.json");
+const contactsPath = join(process.cwd(), "/db/contacts.json");
 
 async function listContacts() {
   const contactsData = await readFile(contactsPath, "utf-8");
@@ -63,3 +63,4 @@ async function updateContact(contactId, updatedContactInfo) {
 }
 
 export { listContacts, getContactById, removeContact, addContact, updateContact };
+export default contactsService;
