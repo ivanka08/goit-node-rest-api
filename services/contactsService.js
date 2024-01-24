@@ -63,4 +63,3 @@ async function updateContact(contactId, updatedContactInfo) {
 }
 
 export { listContacts, getContactById, removeContact, addContact, updateContact };
-export default contactsService;
