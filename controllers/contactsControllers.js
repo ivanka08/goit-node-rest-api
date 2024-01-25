@@ -41,7 +41,7 @@ export const createContact = (req, res) => {
   res.status(201).json(createdContact);
 };
 
-export const updateContact = (req, res) => {
+export const updateContacts = (req, res) => {
   const contactId = req.params.id;
   const updatedContactInfo = req.body;
 
