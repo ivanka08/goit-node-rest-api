@@ -1,14 +1,14 @@
-import "../services/contactsService.js";
+import { listContacts, getContactById, removeContact, addContact, updateContact } from "../services/contactsServices.js";
 import { createContactSchema, updateContactSchema } from "../schemas/contactsSchemas.js";
 
 export const getAllContacts = (req, res) => {
-  const allContacts = contactsService.listContacts();
+  const allContacts = listContacts();
   res.status(200).json(allContacts);
 };
 
 export const getOneContact = (req, res) => {
   const contactId = req.params.id;
-  const contact = contactsService.getContactById(contactId);
+  const contact = getContactById(contactId);
 
   if (contact) {
     res.status(200).json(contact);
@@ -19,7 +19,7 @@ export const getOneContact = (req, res) => {
 
 export const deleteContact = (req, res) => {
   const contactId = req.params.id;
-  const deletedContact = contactsService.removeContact(contactId);
+  const deletedContact = removeContact(contactId);
 
   if (deletedContact) {
     res.status(200).json(deletedContact);
@@ -36,7 +36,7 @@ export const createContact = (req, res) => {
   }
 
   const newContact = req.body;
-  const createdContact = contactsService.addContact(newContact);
+  const createdContact = addContact(newContact);
 
   res.status(201).json(createdContact);
 };
@@ -54,7 +54,7 @@ export const updateContact = (req, res) => {
     return res.status(400).json({ message: error.message });
   }
 
-  const updatedContact = contactsService.updateContact(contactId, updatedContactInfo);
+  const updatedContact = updateContact(contactId, updatedContactInfo);
 
   if (updatedContact) {
     res.status(200).json(updatedContact);
