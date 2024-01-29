@@ -1,5 +1,6 @@
 import { readFile, writeFile } from "fs/promises";
 import { join } from "path";
+import { nanoid } from "nanoid";
 
 const contactsPath = join(process.cwd(), "/db/contacts.json");
 
@@ -28,21 +29,18 @@ async function removeContact(contactId) {
 }
 
 async function addContact(name, email, phone) {
-    const contacts = await listContacts();
-    
-    const numericIds = contacts.map((contact) => contact.id).filter((id) => typeof id === 'number');
+  const contacts = await listContacts();
 
-  const maxId = numericIds.length > 0 ? Math.max(...numericIds) : 0;
-  const contactId = maxId + 1;
+  const contactId = nanoid();
 
   const contact = {
     id: contactId,
     name,
     email,
     phone,
-    };
-    
-      contacts.push(contact);
+  };
+
+  contacts.push(contact);
   await writeFile(contactsPath, JSON.stringify(contacts), "utf-8");
   return contact;
 }
