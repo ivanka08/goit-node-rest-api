@@ -1,14 +1,14 @@
 import { listContacts, getContactById, removeContact, addContact, updateContact } from "../services/contactsServices.js";
 import { createContactSchema, updateContactSchema } from "../schemas/contactsSchemas.js";
 
-export const getAllContacts = (req, res) => {
-  const allContacts = listContacts();
+export const getAllContacts = async (req, res) => {
+  const allContacts = await listContacts();
   res.status(200).json(allContacts);
 };
 
-export const getOneContact = (req, res) => {
+export const getOneContact = async (req, res) => {
   const contactId = req.params.id;
-  const contact = getContactById(contactId);
+  const contact = await getContactById(contactId);
 
   if (contact) {
     res.status(200).json(contact);
@@ -17,9 +17,9 @@ export const getOneContact = (req, res) => {
   }
 };
 
-export const deleteContact = (req, res) => {
+export const deleteContact = async (req, res) => {
   const contactId = req.params.id;
-  const deletedContact = removeContact(contactId);
+  const deletedContact = await removeContact(contactId);
 
   if (deletedContact) {
     res.status(200).json(deletedContact);
@@ -28,7 +28,7 @@ export const deleteContact = (req, res) => {
   }
 };
 
-export const createContact = (req, res) => {
+export const createContact = async (req, res) => {
 
   const { error } = createContactSchema.validate(req.body);
   if (error) {
@@ -36,12 +36,12 @@ export const createContact = (req, res) => {
   }
 
   const newContact = req.body;
-  const createdContact = addContact(newContact);
+  const createdContact = await addContact(newContact);
 
   res.status(201).json(createdContact);
 };
 
-export const updateContacts = (req, res) => {
+export const updateContacts = async (req, res) => {
   const contactId = req.params.id;
   const updatedContactInfo = req.body;
 
@@ -54,7 +54,7 @@ export const updateContacts = (req, res) => {
     return res.status(400).json({ message: error.message });
   }
 
-  const updatedContact = updateContact(contactId, updatedContactInfo);
+  const updatedContact = await updateContact(contactId, updatedContactInfo);
 
   if (updatedContact) {
     res.status(200).json(updatedContact);
