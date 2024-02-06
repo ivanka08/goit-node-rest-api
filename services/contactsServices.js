@@ -4,10 +4,7 @@ import { nanoid } from 'nanoid';
 
 const contactsPath = join(process.cwd(), '/db/contacts.json');
 
-mongoose.connect('mongodb+srv://Ivanka1:Zxc876ff@cluster0.8dhan4l.mongodb.net/', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+mongoose.connect('mongodb+srv://Ivanka1:Zxc876ff@cluster0.8dhan4l.mongodb.net/');
 
 const contactSchema = new mongoose.Schema({
   name: {
@@ -58,7 +55,7 @@ async function removeContact(contactId) {
   }
 }
 
-async function addContact(name, email, phone) {
+async function addContact({ name, email, phone }) {
   const contactId = nanoid();
   const newContact = new Contact({ id: contactId, name, email, phone });
 

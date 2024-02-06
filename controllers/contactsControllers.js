@@ -1,38 +1,39 @@
-import { listContacts, getContactById, removeContact, addContact, updateContact } from "../services/contactsServices.js";
+import { listContacts, getContactById, removeContact, addContact, updateContact, updateFavoriteStatus } from "../services/contactsServices.js";
 import { createContactSchema, updateContactSchema } from "../schemas/contactsSchemas.js";
+import HttpError from "../helpers/HttpError.js"
 
 export const getAllContacts = async (req, res) => {
   const allContacts = await listContacts();
   res.status(200).json(allContacts);
 };
 
-export const getOneContact = async (req, res) => {
+export const getOneContact = async (req, res, next) => {
   const contactId = req.params.id;
   const contact = await getContactById(contactId);
 
   if (contact) {
     res.status(200).json(contact);
   } else {
-    res.status(404).json({ message: "Not found" });
+   HttpError(400, error.message);
   }
 };
 
-export const deleteContact = async (req, res) => {
+export const deleteContact = async (req, res, next) => {
   const contactId = req.params.id;
   const deletedContact = await removeContact(contactId);
 
   if (deletedContact) {
     res.status(200).json(deletedContact);
   } else {
-    res.status(404).json({ message: "Not found" });
+    HttpError(400, error.message);
   }
 };
 
-export const createContact = async (req, res) => {
+export const createContact = async (req, res, next) => {
 
   const { error } = createContactSchema.validate(req.body);
   if (error) {
-    return res.status(400).json({ message: error.message });
+    return HttpError(400, error.message);
   }
 
   const newContact = req.body;
@@ -41,17 +42,17 @@ export const createContact = async (req, res) => {
   res.status(201).json(createdContact);
 };
 
-export const updateContacts = async (req, res) => {
+export const updateContacts = async (req, res, next) => {
   const contactId = req.params.id;
   const updatedContactInfo = req.body;
 
   if (Object.keys(updatedContactInfo).length === 0) {
-    return res.status(400).json({ message: "Body must have at least one field" });
+    return HttpError(400, error.message);
   }
 
   const { error } = updateContactSchema.validate(updatedContactInfo);
   if (error) {
-    return res.status(400).json({ message: error.message });
+    return HttpError(400, error.message);
   }
 
   const updatedContact = await updateContact(contactId, updatedContactInfo);
@@ -59,16 +60,16 @@ export const updateContacts = async (req, res) => {
   if (updatedContact) {
     res.status(200).json(updatedContact);
   } else {
-    res.status(404).json({ message: "Not found" });
+    HttpError(400, error.message);
   }
 };
 
-export const updateStatusContact = async (req, res) => {
+export const updateStatusContact = async (req, res, next) => {
   const contactId = req.params.contactId;
   const { favorite } = req.body;
 
   if (typeof favorite !== 'boolean') {
-    return res.status(400).json({ message: "Invalid value for 'favorite' field" });
+    return HttpError(400, error.message);
   }
 
   const updatedContact = await updateFavoriteStatus(contactId, favorite);
@@ -76,6 +77,6 @@ export const updateStatusContact = async (req, res) => {
   if (updatedContact) {
     res.status(200).json(updatedContact);
   } else {
-    res.status(404).json({ message: "Not found" });
+    HttpError(400, error.message);
   }
 };
