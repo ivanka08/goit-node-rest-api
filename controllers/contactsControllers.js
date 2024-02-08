@@ -8,24 +8,32 @@ export const getAllContacts = async (req, res) => {
 };
 
 export const getOneContact = async (req, res, next) => {
-  const contactId = req.params.id;
-  const contact = await getContactById(contactId);
+  try {
+    const contactId = req.params.id;
+    const contact = await getContactById(contactId);
 
-  if (contact) {
-    res.status(200).json(contact);
-  } else {
-   HttpError(400, error.message);
+    if (contact) {
+      res.status(200).json(contact);
+    } else {
+      throw HttpError(400, error.message);
+    }
+  } catch (error) {
+    next(error);
   }
 };
 
 export const deleteContact = async (req, res, next) => {
-  const contactId = req.params.id;
-  const deletedContact = await removeContact(contactId);
+  try {
+    const contactId = req.params.id;
+    const deletedContact = await removeContact(contactId);
 
-  if (deletedContact) {
-    res.status(200).json(deletedContact);
-  } else {
-    HttpError(400, error.message);
+    if (deletedContact) {
+      res.status(200).json(deletedContact);
+    } else {
+     throw HttpError(400, error.message);
+    }
+  } catch (error) {
+    next(error);
   }
 };
 
@@ -43,24 +51,28 @@ export const createContact = async (req, res, next) => {
 };
 
 export const updateContacts = async (req, res, next) => {
-  const contactId = req.params.id;
-  const updatedContactInfo = req.body;
+  try {
+    const contactId = req.params.id;
+    const updatedContactInfo = req.body;
 
-  if (Object.keys(updatedContactInfo).length === 0) {
-    return HttpError(400, error.message);
-  }
+    if (Object.keys(updatedContactInfo).length === 0) {
+      return HttpError(400, error.message);
+    }
 
-  const { error } = updateContactSchema.validate(updatedContactInfo);
-  if (error) {
-    return HttpError(400, error.message);
-  }
+    const { error } = updateContactSchema.validate(updatedContactInfo);
+    if (error) {
+      return HttpError(400, error.message);
+    }
 
-  const updatedContact = await updateContact(contactId, updatedContactInfo);
+    const updatedContact = await updateContact(contactId, updatedContactInfo);
 
-  if (updatedContact) {
-    res.status(200).json(updatedContact);
-  } else {
-    HttpError(400, error.message);
+    if (updatedContact) {
+      res.status(200).json(updatedContact);
+    } else {
+     throw HttpError(400, error.message);
+    }
+  } catch (error) {
+    next(error);
   }
 };
 
