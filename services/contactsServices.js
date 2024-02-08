@@ -36,13 +36,9 @@ async function listContacts() {
 }
 
 async function getContactById(contactId) {
-  try {
     const contact = await Contact.findById(contactId);
     return contact ?? null;
-  } catch (error) {
-    console.error('Error getting contact by ID:', error.message);
-    process.exit(1);
-  }
+  
 }
 
 async function removeContact(contactId) {
