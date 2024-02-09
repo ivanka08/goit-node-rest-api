@@ -18,7 +18,7 @@ export const getOneContact = async (req, res, next) => {
       throw HttpError(400, error.message);
     }
   } catch (error) {
-    next(error);
+    res.status(400).json({ error: 'Contact not found' });
   }
 };
 
@@ -69,7 +69,7 @@ export const updateContacts = async (req, res, next) => {
     if (updatedContact) {
       res.status(200).json(updatedContact);
     } else {
-     throw HttpError(400, error.message);
+      return HttpError(400, error.message);
     }
   } catch (error) {
     next(error);
@@ -77,18 +77,22 @@ export const updateContacts = async (req, res, next) => {
 };
 
 export const updateStatusContact = async (req, res, next) => {
-  const contactId = req.params.contactId;
-  const { favorite } = req.body;
+  try {
+    const contactId = req.params.contactId;
+    const { favorite } = req.body;
 
-  if (typeof favorite !== 'boolean') {
-    return HttpError(400, error.message);
-  }
+    if (typeof favorite !== 'boolean') {
+      return HttpError(400, error.message);
+    }
 
-  const updatedContact = await updateFavoriteStatus(contactId, favorite);
+    const updatedContact = await updateFavoriteStatus(contactId, favorite);
 
-  if (updatedContact) {
-    res.status(200).json(updatedContact);
-  } else {
-    HttpError(400, error.message);
-  }
+    if (updatedContact) {
+      res.status(200).json(updatedContact);
+    } else {
+     throw HttpError(400, error.message);
+    }
+  } catch (error) {
+    next(error);
+  } 
 };
