@@ -69,7 +69,7 @@ export const updateContacts = async (req, res, next) => {
     if (updatedContact) {
       res.status(200).json(updatedContact);
     } else {
-      return HttpError(400, error.message);
+      throw HttpError(400, error.message);
     }
   } catch (error) {
     next(error);
