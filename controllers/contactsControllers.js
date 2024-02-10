@@ -38,16 +38,19 @@ export const deleteContact = async (req, res, next) => {
 };
 
 export const createContact = async (req, res, next) => {
+  try {
+    const { error } = createContactSchema.validate(req.body);
+    if (error) {
+      throw HttpError(400, error.message);
+    }
 
-  const { error } = createContactSchema.validate(req.body);
-  if (error) {
-    return HttpError(400, error.message);
+    const newContact = req.body;
+    const createdContact = await addContact(newContact);
+
+    res.status(201).json(createdContact);
+  } catch (error) {
+    next(error);
   }
-
-  const newContact = req.body;
-  const createdContact = await addContact(newContact);
-
-  res.status(201).json(createdContact);
 };
 
 export const updateContacts = async (req, res, next) => {
@@ -56,12 +59,12 @@ export const updateContacts = async (req, res, next) => {
     const updatedContactInfo = req.body;
 
     if (Object.keys(updatedContactInfo).length === 0) {
-      return HttpError(400, error.message);
+      throw HttpError(400, error.message);
     }
 
     const { error } = updateContactSchema.validate(updatedContactInfo);
     if (error) {
-      return HttpError(400, error.message);
+      throw HttpError(400, error.message);
     }
 
     const updatedContact = await updateContact(contactId, updatedContactInfo);
@@ -82,7 +85,7 @@ export const updateStatusContact = async (req, res, next) => {
     const { favorite } = req.body;
 
     if (typeof favorite !== 'boolean') {
-      return HttpError(400, error.message);
+      throw HttpError(400, error.message);
     }
 
     const updatedContact = await updateFavoriteStatus(contactId, favorite);

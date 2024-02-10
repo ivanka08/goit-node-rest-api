@@ -65,17 +65,12 @@ async function addContact({ name, email, phone }) {
 }
 
 async function updateContact(contactId, updatedContactInfo) {
-  try {
     const updatedContact = await Contact.findByIdAndUpdate(
       contactId,
       { $set: updatedContactInfo },
       { new: true }
     );
-    return updatedContact ?? null;
-  } catch (error) {
-    console.error('Error updating contact:', error.message);
-    process.exit(1);
-  }
+    return updatedContact ?? null; 
 }
 
 async function updateFavoriteStatus(contactId, favorite) {
