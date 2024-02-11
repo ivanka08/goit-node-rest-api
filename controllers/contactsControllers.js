@@ -19,7 +19,7 @@ export const getOneContact = async (req, res, next) => {
       throw HttpError(400, error.message);
     }
   } catch (error) {
-    res.status(400).json({ error: 'Contact not found' });
+    res.status(404).json({ error: 'Contact not found' });
   }
 };
 
