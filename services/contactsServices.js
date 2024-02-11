@@ -42,13 +42,10 @@ async function getContactById(contactId) {
 }
 
 async function removeContact(contactId) {
-  try {
+  
     const removedContact = await Contact.findByIdAndDelete(contactId);
     return removedContact ?? null;
-  } catch (error) {
-    console.error('Error removing contact:', error.message);
-    process.exit(1);
-  }
+  
 }
 
 async function addContact({ name, email, phone }) {

@@ -1,6 +1,7 @@
 import { listContacts, getContactById, removeContact, addContact, updateContact, updateFavoriteStatus } from "../services/contactsServices.js";
 import { createContactSchema, updateContactSchema } from "../schemas/contactsSchemas.js";
 import HttpError from "../helpers/HttpError.js"
+import mongoose from 'mongoose';
 
 export const getAllContacts = async (req, res) => {
   const allContacts = await listContacts();
@@ -27,10 +28,14 @@ export const deleteContact = async (req, res, next) => {
     const contactId = req.params.id;
     const deletedContact = await removeContact(contactId);
 
+    if (!mongoose.Types.ObjectId.isValid(contactId)) {
+      return res.status(404).json({ message: 'Not Found' });
+    }
+
     if (deletedContact) {
       res.status(200).json(deletedContact);
     } else {
-     throw HttpError(400, error.message);
+     res.status(404).json({ message: "Not found" });
     }
   } catch (error) {
     next(error);
@@ -59,12 +64,12 @@ export const updateContacts = async (req, res, next) => {
     const updatedContactInfo = req.body;
 
     if (Object.keys(updatedContactInfo).length === 0) {
-      throw HttpError(400, error.message);
+       return res.status(400).json({ message: "Body must have at least one field" });
     }
 
     const { error } = updateContactSchema.validate(updatedContactInfo);
     if (error) {
-      throw HttpError(400, error.message);
+      return res.status(400).json({ message: error.message });
     }
 
     const updatedContact = await updateContact(contactId, updatedContactInfo);
@@ -72,7 +77,7 @@ export const updateContacts = async (req, res, next) => {
     if (updatedContact) {
       res.status(200).json(updatedContact);
     } else {
-      throw HttpError(400, error.message);
+      res.status(404).json({ message: "Not found" });
     }
   } catch (error) {
     next(error);
@@ -85,7 +90,7 @@ export const updateStatusContact = async (req, res, next) => {
     const { favorite } = req.body;
 
     if (typeof favorite !== 'boolean') {
-      throw HttpError(400, error.message);
+      return res.status(400).json({ message: "Invalid value for 'favorite' field" });
     }
 
     const updatedContact = await updateFavoriteStatus(contactId, favorite);
@@ -93,7 +98,7 @@ export const updateStatusContact = async (req, res, next) => {
     if (updatedContact) {
       res.status(200).json(updatedContact);
     } else {
-     throw HttpError(400, error.message);
+     return res.status(400).json({ message: "Not found" });
     }
   } catch (error) {
     next(error);
