@@ -1,9 +1,21 @@
 const express = require('express');
-const authController = require('./controllers/user');
+const authMiddleware = require('./middlewares/authMiddleware');
+const {
+  register,
+  login,
+  logout,
+  getCurrentUser,
+} = require('./controllers/user');
 
 const router = express.Router();
 
-router.post('/users/register', authController.register);
-router.post('/users/login', authController.login);
+userRouter.post('/users/register', register);
+userRouter.post('/users/login', login);
+userRouter.post('/users/logout', logout);
+userRouter.get('/users/current', getCurrentUser);
 
-module.exports = router;
+router.get('/protected-route', authMiddleware, (req, res) => {
+  return res.status(200).json({ message: 'Protected route', user: req.user });
+});
+
+module.exports = userRouter;

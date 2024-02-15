@@ -82,7 +82,34 @@ const login = async (req, res) => {
   }
 };
 
+const logout = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+
+    if (!user) {
+      return res.status(401).json({ message: 'Not authorized' });
+    }
+
+    user.token = null; 
+    await user.save();
+
+    return res.status(204).json(); 
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+const getCurrentUser = (req, res) => {
+  return res.status(200).json({
+    email: req.user.email,
+    subscription: req.user.subscription,
+  });
+};
+
 module.exports = {
   register,
   login,
+  logout,
+  getCurrentUser,
 };
