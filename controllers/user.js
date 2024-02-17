@@ -1,7 +1,7 @@
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const User = require('../services/usermodel.js');
-const Joi = require('joi');
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import User from '../services/usermodel.js';
+import Joi from 'joi';
 
 const registrationSchema = Joi.object({
   email: Joi.string().email().required(),
@@ -107,7 +107,7 @@ const getCurrentUser = (req, res) => {
   });
 };
 
-module.exports = {
+export {
   register,
   login,
   logout,

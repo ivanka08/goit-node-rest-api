@@ -1,6 +1,6 @@
 
-const jwt = require('jsonwebtoken');
-const User = require('../services/usermodel.js');
+import jwt from 'jsonwebtoken';
+import User from '../services/usermodel.js';
 
 const authMiddleware = async (req, res, next) => {
   try {
@@ -10,7 +10,7 @@ const authMiddleware = async (req, res, next) => {
       return res.status(401).json({ message: 'Not authorized' });
     }
 
-    const decodedToken = jwt.verify(token, 'your-secret-key');
+    const decodedToken = jwt.verify(token, 'shhhhh');
     const userId = decodedToken.userId;
 
     const user = await User.findById(userId);
@@ -34,4 +34,4 @@ const authMiddleware = async (req, res, next) => {
   }
 };
 
-module.exports = authMiddleware;
+export default authMiddleware;
