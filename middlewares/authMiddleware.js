@@ -10,12 +10,18 @@ const authMiddleware = async (req, res, next) => {
       return res.status(401).json({ message: 'Not authorized' });
     }
 
-    const decodedToken = jwt.verify(token, 'shhhhh');
+    const tokenParts = token.split(' ');
+
+    if (tokenParts.length !== 2 || tokenParts[0] !== 'Bearer') {
+      return res.status(401).json({ message: 'Not authorized' });
+    }
+
+    const decodedToken = jwt.verify(tokenParts[1], 'shhhhh');
     const userId = decodedToken.userId;
 
     const user = await User.findById(userId);
 
-    if (!user || user.token !== token) {
+    if (!user || user.token !== tokenParts[1]) {
       return res.status(401).json({ message: 'Not authorized' });
     }
 
@@ -25,7 +31,7 @@ const authMiddleware = async (req, res, next) => {
       subscription: user.subscription,
     };
 
-    req.token = token;
+    req.token = tokenParts[1];
 
     next();
   } catch (error) {
@@ -35,3 +41,4 @@ const authMiddleware = async (req, res, next) => {
 };
 
 export default authMiddleware;
+
