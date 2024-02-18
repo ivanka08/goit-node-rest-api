@@ -10,10 +10,10 @@ import {
 
 const userRouter = express.Router();
 
-userRouter.post('/users/register', register);
-userRouter.post('/users/login', login);
-userRouter.post('/users/logout', logout);
-userRouter.get('/users/current', getCurrentUser);
+userRouter.post('/register', register);
+userRouter.post('/login', login);
+userRouter.post('/logout', logout);
+userRouter.get('/current', getCurrentUser);
 
 userRouter.get('/protected-route', authMiddleware, (req, res) => {
   return res.status(200).json({ message: 'Protected route', user: req.user });
