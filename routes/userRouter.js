@@ -6,6 +6,7 @@ import {
   login,
   logout,
   getCurrentUser,
+  updateUserAvatar,
 } from '../controllers/user.js';
 
 const userRouter = express.Router();
@@ -14,6 +15,7 @@ userRouter.post('/register', register);
 userRouter.post('/login', login);
 userRouter.post('/logout', authMiddleware, logout);
 userRouter.get('/current', authMiddleware, getCurrentUser);
+userRouter.patch('/avatars', authMiddleware, updateUserAvatar);
 
 userRouter.get('/protected-route', authMiddleware, (req, res) => {
   return res.status(200).json({ message: 'Protected route', user: req.user });

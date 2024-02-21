@@ -1,11 +1,19 @@
 import express from "express";
 import morgan from "morgan";
 import cors from "cors";
+import path from 'path';
 
 import contactsRouter from "./routes/contactsRouter.js";
 import userRouter from "./routes/userRouter.js";
 
 const app = express();
+
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+app.use('/avatars', express.static(path.join(__dirname, 'public', 'avatars')));
 
 app.use(morgan("tiny"));
 app.use(cors());

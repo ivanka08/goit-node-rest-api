@@ -1,4 +1,4 @@
-
+import gravatar from 'gravatar';
 import mongoose from 'mongoose';
 const Schema = mongoose.Schema;
 
@@ -33,6 +33,14 @@ const userSchema = new Schema({
       },
     }
   ],
+  avatarURL: String, 
+});
+
+userSchema.pre('save', function (next) {
+  if (!this.avatarURL) {
+    this.avatarURL = gravatar.url(this.email, { s: '250', d: 'retro' }, true);
+  }
+  next();
 });
 
 const User = mongoose.model('User', userSchema);
