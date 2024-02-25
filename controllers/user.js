@@ -4,6 +4,8 @@ import User from '../services/usermodel.js';
 import Joi from 'joi';
 import jimp from 'jimp';
 import path from 'path';
+import nanoid from 'nanoid';
+import emailService from '../emailService.js';
 
 const registrationSchema = Joi.object({
   email: Joi.string().email().required(),
@@ -29,13 +31,17 @@ const register = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
+    const verificationToken = nanoid();
+    
     const newUser = new User({
       email: req.body.email,
       password: hashedPassword,
       subscription: 'starter',
+      verificationToken, 
     });
-
+    
     await newUser.save();
+    await emailService.sendVerificationEmail(req.body.email, verificationToken);
 
     return res.status(201).json({
       user: {
@@ -134,10 +140,59 @@ const updateUserAvatar = async (req, res) => {
   }
 };
 
+const verifyEmail = async (req, res) => {
+  try {
+    const { verificationToken } = req.params;
+
+    const user = await User.findOne({ verificationToken });
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    
+    user.verificationToken = null;
+    user.verify = true;
+    await user.save();
+
+    return res.status(200).json({ message: 'Verification successful' });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+const resendVerificationEmail = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ message: 'Missing required field: email' });
+    }
+
+    const user = await User.findOne({ email });
+
+    if (user.verify) {
+      return res.status(400).json({ message: 'Verification has already been passed' });
+    }
+    const verificationToken = nanoid();
+    user.verificationToken = verificationToken;
+    await user.save();
+
+    await emailService.sendVerificationEmail(email, verificationToken);
+
+    return res.status(200).json({ message: 'Verification email sent' });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
 export {
   register,
   login,
   logout,
   getCurrentUser,
   updateUserAvatar,
+  verifyEmail,
+  resendVerificationEmail,
 };
