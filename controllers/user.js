@@ -4,8 +4,8 @@ import User from '../services/usermodel.js';
 import Joi from 'joi';
 import jimp from 'jimp';
 import path from 'path';
-import nanoid from 'nanoid';
-import emailService from '../emailService.js';
+import { nanoid } from 'nanoid';
+import sendVerificationEmail from '../emailService.js';
 
 const registrationSchema = Joi.object({
   email: Joi.string().email().required(),
