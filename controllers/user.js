@@ -41,7 +41,7 @@ const register = async (req, res) => {
     });
     
     await newUser.save();
-    await emailService.sendVerificationEmail(req.body.email, verificationToken);
+    await sendVerificationEmail(req.body.email, verificationToken);
 
     return res.status(201).json({
       user: {
